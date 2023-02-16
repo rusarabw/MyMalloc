@@ -62,7 +62,7 @@ void* MyMalloc(size_t size) {
         ov_head *ptr = (ov_head*)&memory[0];
         ptr->length = MEM_SIZE - OH_SIZE;
         addBlock(&free_list,&ptr);
-        printf("Allocating for the first time %p->%d | f->%p\n",ptr,ptr->length,free_list);
+        // printf("Allocating for the first time %p->%d | f->%p\n",ptr,ptr->length,free_list);
     } 
     
     // Find a suitable memory block in the free list
@@ -72,7 +72,7 @@ void* MyMalloc(size_t size) {
     if (ptr == NULL) {
         return NULL;
     }
-    printf("Found block %p->%d\n",ptr,ptr->length);
+    // printf("Found block %p->%d\n",ptr,ptr->length);
     
     // Remove the relevent free block from the free list 
     size_t rem_size = ptr->length - size;
@@ -82,7 +82,7 @@ void* MyMalloc(size_t size) {
     ov_head *u_block = (ov_head*)&memory[(size_t)((char*)ptr-memory)];
     u_block->length = size;
     addBlock(&used_list,&u_block);
-    printf("Allocated block %p->%d\n",u_block,u_block->length);
+    // printf("Allocated block %p->%d\n",u_block,u_block->length);
 
     /* 
        Add the remaining portion of the free block to the free list only if it is large 
@@ -94,11 +94,11 @@ void* MyMalloc(size_t size) {
         ov_head *f_block = (ov_head*)&memory[(size_t)((char*)ptr-memory) + size + OH_SIZE];
         f_block->length = rem_size - OH_SIZE;
         addBlock(&free_list,&f_block);
-        printf("Free block %p->%d\n",f_block,f_block->length);
+        // printf("Free block %p->%d\n",f_block,f_block->length);
     }
 
     // Return the staring address of the allocated memory space
-    printf("Return value %p\n",&memory[(size_t)((char*)ptr-memory) + OH_SIZE]);
+    // printf("Return value %p\n",&memory[(size_t)((char*)ptr-memory) + OH_SIZE]);
     return (void*)&memory[(size_t)((char*)ptr-memory) + OH_SIZE];
 }
 
@@ -122,9 +122,9 @@ void MyFree(void *ptr) {
         return;
 
     // Identifying the real pointer with the overhead
-    printf("Pointer given as the argument %p\n",ptr);
+    // printf("Pointer given as the argument %p\n",ptr);
     ov_head *real_ptr = (ov_head*)&memory[(size_t)((char*)ptr-memory) - OH_SIZE];
-    printf("Real pointer %p\n",real_ptr);
+    // printf("Real pointer %p\n",real_ptr);
     ov_head *temp = used_list;
 
     bool flag = false;
@@ -139,7 +139,7 @@ void MyFree(void *ptr) {
         if(temp == real_ptr) {
             flag = true;
         }
-        printf("Used block %p\n",temp);
+        // printf("Used block %p\n",temp);
         temp = temp->next;
     }
     if(temp == real_ptr)
@@ -147,19 +147,19 @@ void MyFree(void *ptr) {
 
     // If the given pointer is not available in the used list, function does nothing
     if(!flag) {
-        printf("Given pointer %p is invalid\n",ptr);
+        // printf("Given pointer %p is invalid\n",ptr);
         return;
     }
 
     // Remove the given block from the used list
-    printf("before removing from used list Used list->%p | Real Pointer->%p\n",used_list,real_ptr);
+    // printf("before removing from used list Used list->%p | Real Pointer->%p\n",used_list,real_ptr);
     delBlock(&used_list,real_ptr);
-    printf("After removing from used list Used list->%p | Real Pointer->%p\n",used_list,real_ptr);
+    // printf("After removing from used list Used list->%p | Real Pointer->%p\n",used_list,real_ptr);
     
     // Add the given block to the free list
-    printf("before adding to the free list Free list->%p | Real Pointer->%p\n",free_list,real_ptr);
+    // printf("before adding to the free list Free list->%p | Real Pointer->%p\n",free_list,real_ptr);
     addBlock(&free_list,&real_ptr);
-    printf("after adding to the free list Free list->%p | Real Pointer->%p\n",free_list,real_ptr);
+    // printf("after adding to the free list Free list->%p | Real Pointer->%p\n",free_list,real_ptr);
 }
 
 // Used to traverse the free list and find a suitable free block for the given size
@@ -196,9 +196,9 @@ void addBlock(ov_head **start, ov_head **block) {
     ptr = ptr->next;
     ov_head *preptr = *start;
     while(ptr != *start) {
-        printf("block->%lld ptr->%lld\n",(long long)*block,(long long)ptr);
+        // printf("block->%lld ptr->%lld\n",(long long)*block,(long long)ptr);
         if((long long)*block < (long long)ptr) {
-            printf("block %p & ptr %p\n",*block,*ptr);
+            // printf("block %p & ptr %p\n",*block,*ptr);
             break;
         }
         preptr = ptr;
@@ -236,16 +236,16 @@ void delBlock(ov_head **start, ov_head *block) {
 void displayList(ov_head *start) {
     ov_head *ptr = start;
     if (start == NULL) {
-        printf("List is empty\n");
+        // printf("List is empty\n");
         return;
     }
     if (start->next == start) {
-        printf("List Item %p\n",start);
+        // printf("List Item %p\n",start);
         return;
     }
     while (ptr->next != start) {
-        printf("List Item %p\n",ptr);
+        // printf("List Item %p\n",ptr);
         ptr = ptr->next;
     }
-    printf("List Item %p\n",ptr);
+    // printf("List Item %p\n",ptr);
 }
